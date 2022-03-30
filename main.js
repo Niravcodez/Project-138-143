@@ -1,4 +1,6 @@
-
+wristX = 0;
+wristY = 0;
+wristScore = 0;
 /*created by prashant shukla */
 
 var paddle2 =10,paddle1=10;
@@ -28,6 +30,7 @@ function setup(){
   video.hide();
 
   poseNet = ml5.poseNet(video, modelLoaded);
+	poseNet.on('pose', gotPoses);
 }
 
 function modelLoaded()
@@ -40,6 +43,13 @@ function draw(){
  background(0); 
  image(video, 0, 0, 700, 600);
 
+ if(wristScore > 0.2)
+ {
+   fill("red");
+   stroke("red");
+   circle(wristX, wristY, 20);
+ }
+
  fill("black");
  stroke("black");
  rect(680,0,20,700);
@@ -47,6 +57,7 @@ function draw(){
  fill("black");
  stroke("black");
  rect(0,0,20,700);
+
  
    //funtion paddleInCanvas call 
    paddleInCanvas();
@@ -75,6 +86,18 @@ function draw(){
    
    //function move call which in very important
     move();
+}
+
+function gotPoses(results)
+{
+	if(results.length > 0)
+	{
+		console.log(results);
+		wristX = results[0].pose.rightWrist.x;
+		wristY = results[0].pose.rightWrist.y;
+
+    wristScore = results[0].pose.keypoints[10].score;
+	}
 }
 
 
